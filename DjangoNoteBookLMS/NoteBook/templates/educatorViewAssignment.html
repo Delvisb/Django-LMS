@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <title>NoteBook</title>
+    <style>
+       #logo{
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 30px;
+            font-weight: bold;
+            font-style: italic;
+        }
+        #font{
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        .dropdown-menu {
+            min-width: 120px !important;
+        }
+        #assignmentInfo{
+            font-size: 20px;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-sm sticky-top bg-light">
+        <div class="col-sm-10">
+            <a class="navbar-brand m-2 text-primary" id = "logo"><i class="bi bi-journal-bookmark-fill"></i> Notebook</a>
+        </div>
+        <div class="col-sm-2">
+            <div class="dropdown">
+                <button type="button" id = "dropDownBtn" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"><i class="bi bi-person-circle"></i> Account</button>
+                <ul class="dropdown-menu col-sm-2 p-0">
+                    <li class="p-1 border-bottom">
+                        <a class="dropdown-item text-center text-primary" id = "font" href = "{% url 'educatorHome' %}"><i class="bi bi-house"></i> Home</a>
+                    </li>
+                    <li class="p-1 border-bottom">
+                        <a class="dropdown-item text-center text-primary" id = "font" href = "{% url 'educatorProfile' %}"><i class="bi bi-person-circle"></i> Profile</a>
+                    </li>
+                    <li class="p-1">
+                        <a class="dropdown-item text-center text-danger" id = "font" href = "{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i> Log Out</a>
+                    </li>
+                </ul>
+            </div>        
+        </div>    
+    </nav>
+    <div class="col-sm-2 m-2">
+        <a class="btn btn-white border border-dark text-center bg-light shadow" id = "font" href = "{% url 'educatorAssignments' context.course_name%}"><i class="bi bi-arrow-return-left"></i> Return</a>
+    </div>
+    <div class="col-sm-12 mt-5 " style="height: 600px;">
+        <div class="d-flex justify-content-center align-items-center">
+            <div class="col-sm-10">
+                <div class="row justify-content-center align-items-center border-bottom p-1 m-auto">
+                    <div class="col-sm-2">
+                        <button type = "button" onclick  = "hideDiv()" class="btn btn-md btn-primary float-end"><i class="bi bi-pencil"></i> Edit</button>
+                    </div>
+                    <div class="col-sm-6">
+                        <h4 id = "font" class="text-dark text-center">Assignment Details</h4>
+                    </div>  
+                    <div class="col-sm-2">
+                        <button type="button" class="btn btn-md btn-danger float-start" data-bs-toggle="modal" data-bs-target="#confirmationModal" ><i class="bi bi-trash"></i> Delete</button>
+                    </div>
+                </div>
+                <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModal" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 class="modal-title text-danger" id="confirmationModal">Alert</h3>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form method = "post" class="col-sm-12">
+                                <div class="modal-body">
+                                    {% csrf_token %}
+                                    <h5>Are you sure you want to delete this assignment? Deletion of this assignment can not be undone.</h5>
+                                    <input type="hidden" name = "assignment_id" value="{{context.assignment.id}}"/>
+                                    <input type="hidden" name = "delete_form" value="Delete"/>
+                                </div>        
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-danger">Delete Assignment</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12" id = "contentDiv">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div class="col-sm-10 m-2 border bg-white rounded p-1" style="height: 500px; overflow-y: scroll;">
+                            <p class="m-2" id="assignmentInfo"> 
+                                <u>Assignment Name</u>: {{context.assignment.assignment_name}}<br>
+                                <u>Assignment Due Date</u>: {{context.assignment.due_date}}<br>
+                                {% if context.assignment.assignment_file|length > 0 %}
+                                    <u>Assignment File</u>: <a target="_blank" href = "{% url 'serveFile' context.assignment.assignment_file %}" >{{context.assignment.assignment_file}}</a><br>
+                                {% endif %}
+                                <u>Assignment Description</u>: 
+                                <p class="m-3 text-center" id="assignmentInfo">{{context.assignment.assignment_description}}</p>
+                            </p>                          
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12" id = "editform" style="display: none;" >
+                    <div class="d-flex justify-content-center align-items-center">
+                        <form class="col-sm-10 m-2 p-1 border bg-white rounded" style="height: 500px; overflow-y: scroll;" name = "edit_form" method="post" >
+                            {% csrf_token %}
+                            <div class="d-flex justify-content-end align-items-center p-1">
+                                <button class="btn btn-white text-danger border border-danger shadow" type="button" onclick = "hideForm()"><i class="bi bi-x"></i> Cancel</button>
+                            </div>
+                            <div class = "form-group m-2">
+                                <label class="form-label" id = "font"><b>Assignment Name</b></label>
+                                <input type = "text" class="form-control" name = "new_assignment_name" placeholder="{{context.assignment.assignment_name}}" value="{{context.assignment.assignment_name}}" required/>
+                            </div>
+                            <div class = "form-group m-2">
+                                <label class="form-label" id = "font"><b>Assignment Due Date</b></label>
+                                <input type = "date" class="form-control" name = "new_due_date" placeholder="{{context.assignment.due_date}}" value="{{context.assignment.due_date}}" required/>
+                            </div>
+                            <div class = "form-group m-2">
+                                <label class="form-label" id = "font"><b>Assignment File</b></label>
+                                <input type = "file" class="form-control" name = "new_assignment_file" />
+                            </div>
+                            <div class = "form-group m-2">
+                                <label class="form-label" id = "font"><b>Assignment Description</b></label>
+                                <textarea type="text" id = "font" class="form-control" name = "new_assignment_description" placeholder = "{{context.assignment.assignment_description }}" value = "{{ context.assignment.assignment_description }}" rows="4" style = "overflow-y: scroll" required></textarea>
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center">
+                                <button type = "submit" class="btn btn-primary">Submit Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function hideDiv(){
+            document.getElementById("contentDiv").style.display = "none";
+            document.getElementById("editform").style.display = "block";
+        }
+        function hideForm(){
+            document.getElementById("contentDiv").style.display = "block";
+            document.getElementById("editform").style.display = "none";
+        }
+    </script>
+</body>
+</html>

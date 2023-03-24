@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <title>NoteBook</title>
+    <style>
+        #logo{
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 30px;
+            font-weight: bold;
+            font-style: italic;
+        }
+        #dropDownBtn{
+            width: 110px;
+            margin: 5px;
+        }
+        #font{
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg sticky-top bg-light">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarToggler">
+                <a class="navbar-brand m-2 text-primary" id = "logo"><i class="bi bi-journal-bookmark-fill"></i> Notebook</a>
+                <ul class="navbar-nav me-auto p-2 mb-2 mb-lg-0">
+                    <div class="dropdown">
+                        <button type="button" id = "dropDownBtn" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">Educators</button>
+                        <ul class="dropdown-menu">
+                          <li id = "navLink"><a class="nav-link text-center border-bottom text-primary" id="font" href = "{% url 'educatorRegister' %}">Register</a></li>
+                          <li id = "navLink"><a class="nav-link text-center text-primary" id="font" href = "{% url 'educatorLogin' %}">Login</a></li>
+                        </ul>
+                    </div>
+                    <div class="dropdown">
+                        <button type="button" id = "dropDownBtn" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">Students</button>
+                        <ul class="dropdown-menu">
+                          <li id = "navLink"><a class="nav-link text-center border-bottom  text-primary" id="font" href = "{% url 'studentRegister' %}">Register</a></li>
+                          <li id = "navLink"><a class="nav-link text-center text-primary" id="font" href = "{% url 'studentLogin' %}">Login</a></li>
+                        </ul>
+                    </div>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class = "d-flex justify-content-center align-items-center" style="height: 80vh;">
+        <h1 id= "font" class="text-primary text-center">Page Not Found!<br> <a class="text-center" href="{% url 'educatorLogin' %}">Login Here</a></h1>
+    </div>
+</body>
+</html>

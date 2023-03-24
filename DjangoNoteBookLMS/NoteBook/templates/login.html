@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <title>NoteBook</title>
+    <style>
+        #logo{
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 30px;
+            font-weight: bold;
+            font-style: italic;
+        }
+        li{
+            width: 100px;
+        }
+        #font{
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-sm sticky-top bg-light">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                <a class="navbar-brand m-2 text-primary" id = "logo"><i class="bi bi-journal-bookmark-fill"></i> Notebook</a>
+                <ul class="navbar-nav me-auto p-2  mb-lg-0">
+                    <li class="nav-item m-1 rounded-pill bg-primary">
+                        <a class="nav-link text-center text-white" id="font" href = "{% url 'register' %}">Register</a></li>
+                    </li>
+                    <li class="nav-item m-1 rounded-pill bg-white border border-primary">
+                        <a class="nav-link text-center text-primary" id="font" href = "{% url 'login' %}">Login</a></li>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="col-md-12" style="height: 70vh;">
+        <div class="d-flex justify-content-center align-items-center h-100">
+            <div class="col-sm-10 bg-light shadow-lg border rounded p-2 m-2">
+                <div class="row justify-content-center align-items-center h-100">
+                    <div class="col-sm-6">
+                        <div class = "row justify-content-center align-items-center p-4">
+                            <form class="col-md-10" method = "post">
+                                {% csrf_token %}
+                                <h2 class="text-center text-primary font-italic" id = "font">Sign In</h2>
+                                <div class = "form-group mt-2">
+                                    <h1 class="text-danger text-center" id = "font">{{context.message}}</h1>
+                                </div>
+                                <div class = "form-group mt-2">
+                                    <label class="form-label" id = "font"><b>Username</b></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                        <input type="text" id = "font" class="form-control" name = "username" placeholder="Enter your username" required>
+                                    </div>
+                                </div>
+                                <div class = "form-group mt-2">
+                                    <label class="form-label" id = "font"><b>Password</b></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-key"></i></span>
+                                        <input type="text" id = "font" class="form-control" name = "password" placeholder="Enter your password" required>
+                                    </div>
+                                </div>
+                                <div class = "form-group mt-2">
+                                    <div class="d-flex justify-content-center">
+                                        <button class="btn btn-primary w-50" type = "submit">Login</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex h-100 justify-content-center align-items-center h-100 p-1">
+                            <div class="table-responsive h-100">
+                                <table class="table h-100">
+                                    <tr>
+                                        <td class="h3 text-center text-primary mt-3" id = "font"><i class="bi bi-journal-check"></i> Solutions For All Your Course Needs</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="h3 text-center text-primary mt-3" id = "font"><i class="bi bi-pen"></i> Create, Edit, and Delete In Seconds</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="h3 text-center text-primary mt-3" id = "font"><i class="bi bi-laptop"></i> Completely Responsive Onn All Devices</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

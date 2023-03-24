@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <title>NoteBook</title>
+    <style>
+       #logo{
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 30px;
+            font-weight: bold;
+            font-style: italic;
+        }
+        #font{
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        .dropdown-menu {
+            min-width: 120px !important;
+        }
+        tr:nth-child(even){
+            background-color: white;
+        }
+        .gradesChart{
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-sm sticky-top bg-light">
+        <div class="col-sm-10">
+            <a class="navbar-brand m-2 text-primary" id = "logo"><i class="bi bi-journal-bookmark-fill"></i> Notebook</a>
+        </div>
+        <div class="col-sm-2">
+            <div class="dropdown">
+                <button type="button" id = "dropDownBtn" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"><i class="bi bi-person-circle"></i> Account</button>
+                <ul class="dropdown-menu col-sm-2 p-0">
+                    <li class="p-1 border-bottom">
+                        <a class="dropdown-item text-center text-primary" id = "font" href = "{% url 'educatorHome' %}"><i class="bi bi-house"></i> Home</a>
+                    </li>
+                    <li class="p-1 border-bottom">
+                        <a class="dropdown-item text-center text-primary" id = "font" href = "{% url 'educatorProfile' %}"><i class="bi bi-person-circle"></i> Profile</a>
+                    </li>
+                    <li class="p-1">
+                        <a class="dropdown-item text-center text-danger" id = "font" href = "{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i> Log Out</a>
+                    </li>
+                </ul>
+            </div>        
+        </div>    
+    </nav>
+    <h1 class="m-1 text-center border-bottom" id = "font">{{context.course_name}}</h1>
+    <div class="col-sm-12 p-1">
+        <nav class="navbar navbar-expand-sm">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                    <ul class="navbar-nav p-2 mb-lg-0 border rounded-4 shadow bg-light" style="margin: 0 auto;">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href = "{% url 'educatorCourses' context.course_name %}"><i class="bi bi-house"></i> Course</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href = "{% url 'educatorStudents' context.course_name %}"><i class="bi bi-people-fill"></i> Students</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href = "{% url 'educatorAssignments' context.course_name %}"><i class="bi bi-file-earmark-plus"></i> Assignments</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href = "{% url 'educatorAttendance' context.course_name context.date %}"><i class="bi bi-calendar-plus"></i> Attendance</a>
+                        </li>
+                        <li class="nav-item rounded border-30 bg-primary">
+                            <a class="nav-link text-white" href = "{% url 'educatorGrades' context.course_name %}"><i class="bi bi-graph-up"></i> Grades</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div class="col-sm-12 p-1">
+        <div class="d-flex justify-content-center align-items-center">
+            <div class="container border p-3 m-1 rounded-4 shadow-lg bg-white"> 
+                <div class="tab-content">
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#gradeSubmissions">Grade Submissions</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#overallGrades">Overall Gardes</a>
+                        </li>
+                    </ul>   
+                    <div class="tab-pane col-sm-12 active" style="height: 500px;" id = "gradeSubmissions" >
+                        <div class="col-sm-12" style="overflow-y: scroll; height: 450px;">   
+                            {% if context.assignments  %}
+                            <div class="d-flex justify-content-center align-items-center">
+                                <div class="col-sm-12">
+                                    <div class="table-responsive p-2">
+                                        <table class="table bg-light">
+                                            <tbody>
+                                                {% if context.enrolled  %}
+                                                    {% for enrolled in context.enrolled %}
+                                                    <tr>
+                                                        <td class="border text-center"><h5 id = "font">{{enrolled.student_id.last_name}}, {{enrolled.student_id.first_name}}</h5></td>
+                                                        {% if context.assignments %}  
+                                                            {% for assignment in context.assignments %}  
+                                                            <td class="border text-center p-1">
+                                                                <h5 id = "font" class="m-0"><u>{{assignment.assignment_name}}</u></h5>
+                                                                {% for submission in context.submissions %}
+                                                                    {% if submission.student_id.id == enrolled.student_id.id and submission.assignment_id.id == assignment.id %}
+                                                                        <a class="p-0 mt-0 text-decoration-none" href="{% url 'educatorViewSubmission' context.course_name submission.id %}">View Submission</a>
+                                                                        {% if context.grades %}
+                                                                            {% for grade in context.grades %}
+                                                                                {% if grade.student_id.id == submission.student_id.id and grade.submission_id.id == submission.id %}
+                                                                                    <p class="text-success p-0 mt-0">{{ grade.grade }}<i class="bi bi-check-all"></i> </p>
+                                                                                {% endif %}
+                                                                            {% endfor %}
+                                                                        {% endif %}
+                                                                    {% endif %}  
+                                                                {% endfor %}
+                                                            </td>
+                                                            {% endfor %}
+                                                        {% endif %}
+                                                    </tr>
+                                                    {% endfor %}
+                                                {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            {% else %}
+                                <div class="d-flex justify-content-center align-items-center h-100">
+                                    <h1 class="text-center text-primary">You have not added any assignments yet</h1>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="tab-pane col-sm-12" style="height: 500px;" id = "overallGrades">
+                        {% if context.grades %}
+                            <div class="col-sm-12 p-0">
+                                <div class="d-flex justify-content-center align-items-center w-100 m-auto p-0" style="height: 450px;">  
+                                    <canvas id="gradesChart" class="col-sm-12 gradesCharts"></canvas>
+                                </div> 
+                            </div> 
+                        {% else %}
+                            <div class="d-flex justify-content-center align-items-center h-100">
+                                <h1 class="text-center text-primary">You have not graded any assignments yet</h1>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script> 
+        var xValues = ["100 - 90", "90 - 80", "80 - 70", "70 - 65", "<65"];
+        var yValues = ['{{context.100Percentage}}', '{{context.90Percentage}}','{{context.80Percentage}}','{{context.70Percentage}}','{{context.65Percentage}}'];
+        var barColors = ["green", "blue", "yellow", "purple", 'red'];
+        new Chart("gradesChart", {
+        type: "bar",
+        data: {
+            labels: xValues,
+            datasets: [{
+            backgroundColor: barColors,
+            data: yValues
+            }]
+        },
+        options: {
+            legend: {display: false},
+            responsive:true,
+            maintainAspectRatio: false
+        }
+        });
+    </script>
+</body>
+</html>

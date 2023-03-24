@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <title>NoteBook</title>
+    <style>
+       #logo{
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 30px;
+            font-weight: bold;
+            font-style: italic;
+        }
+        #font{
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        .dropdown-menu {
+            min-width: 120px !important;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-sm sticky-top bg-light">
+        <div class="col-sm-10">
+            <a class="navbar-brand m-2 text-primary" id = "logo"><i class="bi bi-journal-bookmark-fill"></i> Notebook</a>
+        </div>
+        <div class="col-sm-2">
+            <div class="dropdown">
+                <button type="button" id = "dropDownBtn" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"><i class="bi bi-person-circle"></i> Account</button>
+                <ul class="dropdown-menu col-sm-2 p-0">
+                    <li class="p-1 border-bottom">
+                        <a class="dropdown-item text-center text-primary" id = "font" href = "{% url 'studentHome' %}"><i class="bi bi-house"></i> Home</a>
+                    </li>
+                    <li class="p-1 border-bottom">
+                        <a class="dropdown-item text-center text-primary" id = "font" href = "{% url 'studentProfile' %}"><i class="bi bi-person-circle"></i> Profile</a>
+                    </li>
+                    <li class="p-1">
+                        <a class="dropdown-item text-center text-danger" id = "font" href = "{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i> Log Out</a>
+                    </li>
+                </ul>
+            </div>        
+        </div>    
+    </nav>
+    <h1 class="m-1 text-center border-bottom" id = "font">{{context.course_name}}</h1>
+    <div class="col-sm-12">
+        <nav class="navbar navbar-expand-sm">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                    <ul class="navbar-nav p-2 mb-lg-0 border rounded-4 shadow bg-light" style="margin: 0 auto;">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href = "{% url 'studentCourses' context.course_name %}"><i class="bi bi-house"></i> Course</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href = "{% url 'studentAssignments' context.course_name %}"><i class="bi bi-file-earmark-plus"></i> Assignments</a>
+                        </li>
+                        <li class="nav-item rounded border-30 bg-primary">
+                            <a class="nav-link text-white" href = "{% url 'studentGrades' context.course_name %}"><i class="bi bi-graph-up"></i> Grades</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div class="col-sm-12">
+        <div class="d-flex justify-content-center align-items-center">
+            <div class="container border p-3 m-1 rounded-4 shadow-lg bg-light">
+                {% if context.grades  %}  
+                <h2 class="text-center" id = 'font'>Assignments</h2>
+                <div class="row justify-content-center align-items-center p-2 h-100">
+                    <div class="col-sm-6" style="height: 220px;">
+                        <div class="d-flex justify-content-center align-items-center h-100 w-100">  
+                            <canvas id="gradesChart" style="width:100%; height: 100px;"></canvas>
+                        </div> 
+                    </div> 
+                    <div class="col-sm-6" style="overflow-y: scroll; height: 180px;">  
+                        <div class="table-responsive p-2">
+                            <table class="table bg-light"> 
+                            {% for grade in context.grades %}
+                            <tr>
+                                <td class="border">
+                                    <p class = 'm-1 text-center' id = 'font'>
+                                        {{grade.assignment_id.assignment_name}}
+                                    </p>
+                                </td>
+                                <td class="border text-center">
+                                    <a class = "h5 text-decoration-none" id = 'font'  href = "{% url 'studentViewAssignment' context.course_name grade.assignment_id.id%}" >View Submission</a>
+                                </td>
+                                <td class="border">
+                                    {% if grade.grade > 60 %}
+                                        <p class = 'm-1 text-center text-success' id = 'font'>{{grade.grade}}%</p>
+                                    {% else %}
+                                        <p class = 'm-1 text-center text-danger' id = 'font'>{{grade.grade}}%</p>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                    <div class="d-flex justify-content-center align-items-center h-100">  
+                        <h1 class="text-primary">Grades have not been recorded yet.</h1>
+                    </div> 
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div class="d-flex justify-content-center align-items-center">
+            <div class="container border m-1 rounded-4 shadow-lg bg-light p-2"> 
+                <h2 class="text-center" id = 'font'>Attendance</h2>
+                <div class="row justify-content-center align-items-center p-2 h-100">
+                    {% if context.attendance %}  
+                        <div class="col-sm-6 p-0" style="height: 230px;">
+                            <div class="d-flex justify-content-center align-items-center h-100 w-100 p-0">  
+                                <canvas id="attendanceChart" style="width:100%; height: 220px;"></canvas>
+                            </div> 
+                        </div>  
+                        <div class="col-sm-6" style="height: 230px;">   
+                            <div class="col-sm-12 p-1" style="overflow-y: scroll; height: 180px;"> 
+                                {% for x in context.attendance  %}
+                                    <div class="col-sm-12 border">
+                                        <p class = 'm-1' id = 'font'>{{x.class_date}}  
+                                        {% if x.isPresent == True %}
+                                            <i class="bi bi-check-circle-fill text-success"></i>
+                                        {% else %}
+                                            <i class="bi bi-x-circle-fill text-danger"></i>
+                                        {% endif %}
+                                        </p>
+                                    </div>
+                                {% endfor %}  
+                            </div>
+                        {% else %}
+                            <div class="d-flex justify-content-center align-items-center h-100">  
+                                <h1 class="text-primary">Attendance has not been recorded yet.</h1>
+                            </div> 
+                        {% endif %}
+                    </div> 
+                </div> 
+            </div>
+        </div>
+    </div>
+    <script> 
+        var daysPresent = '{{context.daysPresent}}'
+        var daysAbsent = '{{context.daysAbsent}}'
+        new Chart("attendanceChart", {
+          type: "pie",
+          data: {
+            labels: ["Present", "Absent"],
+            datasets: [{
+              backgroundColor: ["green", "red"],
+              data: [daysPresent, daysAbsent]
+            }]
+          },
+          options: {
+            title: {
+              display: true,
+            }
+          }
+        });
+
+        var xValues = ["100 - 90", "90 - 80", "80 - 70", "70 - 65", "<65"];
+        var yValues = ['{{context.100Percentage}}', '{{context.90Percentage}}','{{context.80Percentage}}','{{context.70Percentage}}','{{context.65Percentage}}'];
+        var barColors = ["green", "blue", "yellow", "purple", 'red'];
+        new Chart("gradesChart", {
+        type: "bar",
+        data: {
+            labels: xValues,
+            datasets: [{
+            backgroundColor: barColors,
+            data: yValues
+            }]
+        },
+        options: {
+            legend: {display: false},
+            responsive:true,
+            maintainAspectRatio: false
+        }
+        });
+    </script>
+
+</body>
+</html>

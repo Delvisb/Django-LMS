@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <title>NoteBook</title>
+    <style>
+       #logo{
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 30px;
+            font-weight: bold;
+            font-style: italic;
+        }
+        #font{
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        #courseInfo{
+            font-size: 20px;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+        }
+        .dropdown-menu {
+            min-width: 120px !important;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-sm sticky-top bg-light">
+        <div class="col-sm-10">
+            <a class="navbar-brand m-2 text-primary" id = "logo"><i class="bi bi-journal-bookmark-fill"></i> Notebook</a>
+        </div>
+        <div class="col-sm-2">
+            <div class="dropdown">
+                <button type="button" id = "dropDownBtn" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"><i class="bi bi-person-circle"></i> Account</button>
+                <ul class="dropdown-menu col-sm-2 p-0">
+                    <li class="p-1 border-bottom">
+                        <a class="dropdown-item text-center text-primary" id = "font" href = "{% url 'studentHome' %}"><i class="bi bi-house"></i> Home</a>
+                    </li>
+                    <li class="p-1 border-bottom">
+                        <a class="dropdown-item text-center text-primary" id = "font" href = "{% url 'studentProfile' %}"><i class="bi bi-person-circle"></i> Profile</a>
+                    </li>
+                    <li class="p-1">
+                        <a class="dropdown-item text-center text-danger" id = "font" href = "{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i> Log Out</a>
+                    </li>
+                </ul>
+            </div>        
+        </div>    
+    </nav>
+    <h1 class="m-1 text-center border-bottom" id = "font">{{context.course_name}}</h1>
+    <div class="col-sm-12">
+        <nav class="navbar navbar-expand-sm">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                    <ul class="navbar-nav p-2 mb-lg-0 border rounded-4 shadow bg-light" style="margin: 0 auto;">
+                        <li class="nav-item rounded border-30 bg-primary">
+                            <a class="nav-link text-white" href = "{% url 'studentCourses' context.course_name %}"><i class="bi bi-house"></i> Course</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href = "{% url 'studentAssignments' context.course_name %}"><i class="bi bi-file-earmark-plus"></i> Assignments</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href = "{% url 'studentGrades' context.course_name %}"><i class="bi bi-graph-up"></i> Grades</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div class="col-sm-12">
+        <div class="d-flex justify-content-center align-items-center">
+            <div class="container border p-3 m-1 rounded-4 shadow-lg bg-light contentContainer" style=" height: 550px; overflow-y: scroll;" >
+                {% for x in context.course %}
+                    <p class="h2 m-2 border-bottom text-center" id="font">Professor Details</p>
+                    <p class="m-2" id="courseInfo">
+                        <i class="bi bi-person-circle"></i> {{x.educator_id.first_name}} {{x.educator_id.last_name}}<br>
+                        <i class="bi bi-envelope"></i> {{x.educator_id.email}} <br>
+                        <i class="bi bi-person-badge"></i> {{x.educator_id.username}}
+                    </p>
+                    <p class="h2 m-2 border-bottom text-center" id="font">Course Overview</p>
+                    <p class="m-2" id="courseInfo"> 
+                        <u>Course Name</u>: {{x.course_name}}<br>
+                        <u>Course Subject</u>: {{x.course_subject}}<br>
+                        <u>Start Date</u>: {{x.start_date}}<br>
+                        <u>End Date</u>: {{x.end_date}}<br> 
+                        <u>Description</u>: 
+                        <p class="m-3 text-center" id="courseInfo">{{x.course_description}}</p>
+                    </p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
